@@ -34,7 +34,7 @@ class Exception
 		
 		void what()
 		{
-			cout<<"\t\t"<< errNo<<" :: "<< msg<<endl;
+			cout<<"\t"<< errNo<<" :: "<< msg<<endl;
 		}
 };
 
