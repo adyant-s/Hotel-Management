@@ -711,9 +711,9 @@ int main() {
                     return 0;
                 }
             }
-            catch (Exception e) {
-                e.show();
-            }
+	           catch (Exception &e) {
+	    e.show();
+	}
         }
     }
     return 0;
