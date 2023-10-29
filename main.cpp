@@ -269,7 +269,7 @@ class RestaurantCustomer : public Customer
 class Employee {
 public:
     virtual void performDuty() = 0;
-    virtual ~Employee() {}
+    virtual ~Employee()=default;
 };
 
 class RoomService : public Employee {
