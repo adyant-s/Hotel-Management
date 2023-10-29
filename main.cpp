@@ -19,573 +19,483 @@ class Room;
 class RoomService;
 
 
-class Exception
+class Exception 
 {
 	public:
-		int errNo;
-		string msg;
-		
-	public:
-		Exception(int errNo,string msg)
-		{
-			this->errNo=errNo;
-			this->msg=msg;
-		}
-		
-		void what()
-		{
-			cout<<"\t"<< errNo<<" :: "<< msg<<endl;
-		}
+	    int errNo;
+	    std::string msg;
+	
+	    Exception(int errNo, const std::string& msg) : errNo(errNo), msg(msg) {}
+	
+	    void what() {
+	        std::cout << "\t" << errNo << " :: " << msg << std::endl;
+	    }
 };
+
 
 
 class Room
 {
 	public:
-		string roomType;
-		int noOfBeds;
-		double rent;
-		int roomNo;
-		int status;
-		
-	public:
-		Room(string roomType,int noOfBeds,double rent,int roomNo )
-		{
-			this->roomType=roomType;
-			this->noOfBeds=noOfBeds;
-			this->rent=rent;
-			this->roomNo=roomNo;
-			this->status=0;
-						
-		}
-		void setRoom()
-		{
-			cout<<"Enter Room Type, No of beds, Rent, RoomNo\n";
-			cin>>this->roomType;
-			cin>>this->noOfBeds;
-			cin>>this->rent;
-			cin>>this->roomNo;
-			status=0;
-			
-		}
-		
-		Room()
-		{
-		}
-
-		
-		
-		
-		bool isVacant(Room r)
-		{
-			if(r.status==1)
-			return false;
-			else 
-			return true;
-		}
-		
-		void displayDetail()
-		{
-			
-			cout<<"Room Type :: "<<this->roomType<<endl;
-			cout<<"Number of Beds :: "<<this->noOfBeds<<endl;
-			cout<<"Rent :: "<<this->rent<<endl;
-			cout<<"Room Number ::"<<this->roomNo<<endl;
-			if(status==1)
-			cout<<" Occupied \n";
-			else
-			cout<<"Vacant \n";
-		}
-		
-		void vacateRoom(int rno)
-		{
-			int i;
-			for(i=0;i<6;i++)
-			{
-				if(this->roomNo==rno)
-			this->status=0;
-		}
-		}
-		
-		void displayAvailable(Room r[6])
-		{
-			int i;
-			for(i=0;i<6;i++)
-			{
-				if(r[i].status==0)
-				r[i].displayDetail();
-			}
-		}
-		
-};
-
-class Dish
-{
-	public:
-		string dishName;
-		double price;
-		string dishType;
-		
-	public:
-		Dish(string dishName,double price,string dishType)
-		{
-			this->dishName=dishName;
-			this->price=price;
-			this->dishType=dishType;
-		}
-		Dish()
-		{
-		    
-		}
-};
-
-
-
-class Customer
-{
-	public:
-		string custName;
-		string custAddress;
-		string custID;
-		long int custPhone;
-		string custEmail;
-		string checkInTime;
-		int status;
-		
-	public:
-		Customer()
-		{
-			time_t c=time(0);
-	        string dt = ctime(&c);
-			this->custName=" ";
-			this->custAddress =" ";
-			this->custID =" ";
-			this->custPhone = 0L;
-			this->custEmail =" ";
-			this->checkInTime = dt;
-			status=0;
-		}
-		
-		void setData()
-		{
-			time_t now=time(0);
-			string dt = ctime(&now);
-			this->checkInTime = dt;
-			ofstream customer;
-			customer.open("Customer.txt",ios::ate);
-			cout<<"Enter your Name :\n";
-			cin>>this->custName;
-			customer << "Name ::"<< this->custName<<"\n";
-			
-			cout<<"Enter your Address :\n";
-			cin>>this->custAddress;
-   			customer<< "Address ::"<< this->custAddress<<"\n";
-			
-			cout<<"Enter your Phone number :\n";
-			cin>>this->custPhone;
-			customer << "Phone ::"<< this->custPhone<<"\n";
-			
-			cout<<"Enter your Email :\n";
-			cin>>this->custEmail;
-			customer << "Email ::"<< this->custEmail<<"\n\n";
-			customer.close();
-			
-		}
-		
-		int selectChoice()
-		{
-			int ch;
-			cout<<" Hello!\n";
-			cout<<"Enter \n1. Accomodation \n 2. Dine\n ";
-			cin>>ch;
-			return ch;
-		}
-		
+	    std::string roomType;
+	    int noOfBeds;
+	    double rent;
+	    int roomNo;
+	    int status;
 	
-		
-		virtual void printCustomer()
-		{
-			cout<<"Name :: "<<this->custName<<endl;
-			cout<<"Address :: "<< this->custAddress<<endl;
-			cout<<"ID :: " <<custID<<endl;
-			cout<<"Phone Number :: "<< custPhone<<endl;
-			cout<<"Email :: "<<custEmail<<endl;
-			cout<<"Check-In Time ::"<<this->checkInTime<<endl;
-			
- 		} 
-		virtual void viewTotalBill(){
-		}
-		virtual void allocateRoom(Room r1){
-		}
-		virtual void allocateDish(Dish d1){
-		}
-		virtual void checkout(){
-		}
+	    Room(const std::string& roomType, int noOfBeds, double rent, int roomNo)
+	        : roomType(roomType), noOfBeds(noOfBeds), rent(rent), roomNo(roomNo), status(0) {}
+	
+	    void setRoom() {
+	        std::cout << "Enter Room Type, No of beds, Rent, RoomNo" << std::endl;
+	        std::cin >> this->roomType;
+	        std::cin >> this->noOfBeds;
+	        std::cin >> this->rent;
+	        std::cin >> this->roomNo;
+	        status = 0;
+	    }
+	
+	    bool isVacant() const {
+	        return (status == 0);
+	    }
+	
+	    void displayDetail() const {
+	        std::cout << "Room Type :: " << this->roomType << std::endl;
+	        std::cout << "Number of Beds :: " << this->noOfBeds << std::endl;
+	        std::cout << "Rent :: " << this->rent << std::endl;
+	        std::cout << "Room Number :: " << this->roomNo << std::endl;
+	        if (status == 1)
+	            std::cout << " Occupied" << std::endl;
+	        else
+	            std::cout << "Vacant" << std::endl;
+	    }
+	
+	    void vacateRoom(int rno) {
+	        if (this->roomNo == rno) {
+	            status = 0;
+	        }
+	    }
+	
+	    static void displayAvailable(const Room r[], int size) {
+	        for (int i = 0; i < size; i++) {
+	            if (r[i].isVacant()) {
+	                r[i].displayDetail();
+	            }
+	        }
+	    }
 };
 
+class Dish 
+{
+	public:
+	    std::string dishName;
+	    double price;
+	    std::string dishType;
+	
+	    Dish(const std::string& dishName, double price, const std::string& dishType)
+	        : dishName(dishName), price(price), dishType(dishType) {}
+	
+	    Dish() {}
+	
+	    void setDish() {
+	        std::cout << "Enter Dish Name, Price, and Dish Type" << std::endl;
+	        std::cin >> this->dishName;
+	        std::cin >> this->price;
+	        std::cin >> this->dishType;
+	    }
+	
+	    void displayDetail() const {
+	        std::cout << "Dish Name :: " << this->dishName << std::endl;
+	        std::cout << "Price :: " << this->price << std::endl;
+	        std::cout << "Dish Type :: " << this->dishType << std::endl;
+	    }
+};
+
+
+
+
+class Customer 
+{
+	public:
+	    std::string custName;
+	    std::string custAddress;
+	    std::string custID;
+	    long int custPhone;
+	    std::string custEmail;
+	    std::string checkInTime;
+	    int status;
+	
+	    Customer() : status(0) {
+	        time_t currentTime = time(0);
+	        checkInTime = ctime(&currentTime);
+	    }
+	
+	    void setData() {
+	        time_t currentTime = time(0);
+	        checkInTime = ctime(&currentTime);
+	
+	        std::ofstream customerFile("Customer.txt", std::ios::app);
+	        if (customerFile.is_open()) {
+	            std::cout << "Enter your Name: " << std::endl;
+	            std::cin >> custName;
+	            customerFile << "Name :: " << custName << "\n";
+	
+	            std::cout << "Enter your Address: " << std::endl;
+	            std::cin >> custAddress;
+	            customerFile << "Address :: " << custAddress << "\n";
+	
+	            std::cout << "Enter your Phone number: " << std::endl;
+	            std::cin >> custPhone;
+	            customerFile << "Phone :: " << custPhone << "\n";
+	
+	            std::cout << "Enter your Email: " << std::endl;
+	            std::cin >> custEmail;
+	            customerFile << "Email :: " << custEmail << "\n\n";
+	
+	            customerFile.close();
+	        }
+    }
+
+    int selectChoice() {
+        int ch;
+        std::cout << "Hello!" << std::endl;
+        std::cout << "Enter\n1. Accommodation\n2. Dine\n";
+        std::cin >> ch;
+        return ch;
+    }
+
+    virtual void printCustomer() {
+        std::cout << "Name :: " << custName << std::endl;
+        std::cout << "Address :: " << custAddress << std::endl;
+        std::cout << "ID :: " << custID << std::endl;
+        std::cout << "Phone Number :: " << custPhone << std::endl;
+        std::cout << "Email :: " << custEmail << std::endl;
+        std::cout << "Check-In Time :: " << checkInTime << std::endl;
+    }
+
+    virtual void viewTotalBill() {
+    }
+
+    virtual void allocateRoom(Room r1) {
+    }
+
+    virtual void allocateDish(Dish d1) {
+    }
+
+    virtual void checkout() {
+    }
+};
 class RoomCustomer : public Customer
 {
-	public:
-		double rbill;
-		Room r;
-		int bookStatus;
-	public:
-		
-		void viewTotalbill()
-		{
-			cout<<"Bill ="<<rbill;
-		}
-		
-		void allocateRoom(Room r1)
-		{
-			this->r=r1;
-		}
-		
-		void printCustomer()
-		{		
-				
-				Customer :: printCustomer();
-				if(r.status==1 && bookStatus==1)
-				
-				{
-				cout<<"Check-In Time :: "<< checkInTime<<endl;
-				cout<<"Room type :: "<<r.roomType<<endl;
-				cout<<"Room Number :: "<<r.roomNo<<endl;
-				
-		}}
-		void viewTotalBill()
-		{
-			this->rbill=r.rent;
-			cout<<"Bill :: "<<this->rbill<<endl;
-		}
-		void checkOut()
-		{
-			cout<<"Your bill is "<<this->rbill<<"/-"<<endl;
-			this->rbill=0;
-			this->r.status=0;
-			cout<<"Thank You! Visit Again.\n"<<endl;
-		}
-		
-			
-};
-
-
-class RestaurantCustomer:public Customer
-{
-	public:
-		double dbill;
-		Dish d;
-		int orderStatus;
-	public:
-		
-		void viewTotalbill()
-		{
-			cout<<"Bill ="<<dbill;
-		}
-		
-		 void allocateDish(Dish d1)
-		 {
-		 	this->d=d1;
-		 }
-		void printCustomer()
-		{		
-				
-				Customer :: printCustomer();
-				if(orderStatus )
-				{
-				cout<<"Dish Name :: "<<d.dishName<<endl;
-				cout<<"Dish Type :: "<<d.dishType<<endl;
-				
-				}}
-		void viewTotalBill()
-		{
-			this->dbill=d.price;
-			cout<<"Bill :: "<<this->dbill<<endl;
-		}
-			
-};
-
-
-class Employee
-{
+	private:
+	    double rbill;
+	    Room r;
+	    int bookStatus;
 	
 	public:
-		
+	    RoomCustomer() : rbill(0), bookStatus(0) {
+	        // You can initialize rbill and bookStatus if needed.
+	    }
 	
-		virtual void performDuty()=0;
-		virtual ~Employee(){
-		}
-};
-
-
-class RoomService:public Employee
-{
-	public:
-		void performDuty()
-		{
-		cout<<"Employee XYZ arriving at your doorstep...\n\n";
-		}
-		
-		virtual ~RoomService(){
-		}
-
-};
-
-class Waiter:public Employee
-{
-	public:
-		void performDuty()
-		{
-			
-			cout<<"\n\nEmployee ABC arriving at your table to take your Order\n\n";
-			
-		}
-		virtual ~Waiter(){
-		}
-};
-
-class SelectEmployee{
-	//protected:
-	Employee *e;
+	    void viewTotalBill() {
+	        std::cout << "Bill = " << rbill << std::endl;
+	    }
 	
-	public:
-		SelectEmployee(Employee *e1)
-		{
-			e=e1;
-		}
-		
-		void performDuty()
-		{
-			e->performDuty();
-		}
+	    void allocateRoom(Room r1) {
+	        r = r1;
+	    }
 	
-};
-
-class Restaurant
-{
-	public:
-		Dish dish[8];
+	    void printCustomer() {
+	        Customer::printCustomer();
+	        if (r.status == 1 && bookStatus == 1) {
+	            std::cout << "Check-In Time :: " << checkInTime << std::endl;
+	            std::cout << "Room type :: " << r.roomType << std::endl;
+	            std::cout << "Room Number :: " << r.roomNo << std::endl;
+	        }
+	    }
 	
-	public:
-		void addDishes()
-		{
-			ofstream menu;
-			menu.open("Menu.txt",ios::ate);
-			int i;
-			for(i=0;i<8;i++)
-			{
-				cout<<i+1<<"] Enter Dish Name Price and Type\n";
-				cin>>dish[i].dishName>>dish[i].price>>dish[i].dishType;
-				menu<< dish[i].dishName<<"\t"<<dish[i].price<<"\t"<<dish[i].dishType<<"\n";
-			}
-			menu.close();
-		}
-		
-		
-			Dish getDish(string dnam)
-		{
-			int i;
-			for(i=0;i<8;i++)
-			{
-				
-				if(dish[i].dishName==dnam)	
-						
-				{
-					return dish[i];
-				}
-		}
-	}
-		
-
-
-			void displayDish(Dish d)
-		{
-			cout<<" Dish Name :: "<<d.dishName<<endl;
-			cout<<" Price :: "<<d.price<<endl;
-			cout<<" Dish Type :: "<<d.dishType;
-			
-		}
-		
-		void displayMenu()
-		{
-			int i;
-			for(i=0;i<8;i++)
-			{
-				displayDish(dish[i]);
-			}
-			
-		}
+	    void viewTotalBill() {
+	        rbill = r.rent;
+	        std::cout << "Bill :: " << rbill << std::endl;
+	    }
 	
+	    void checkOut() {
+	        std::cout << "Your bill is " << rbill << "/-" << std::endl;
+	        rbill = 0;
+	        r.status = 0;
+	        std::cout << "Thank You! Visit Again." << std::endl;
+	    }
 };
 
 
 
-class Hotel
+
+class RestaurantCustomer : public Customer
 {
 	private:
-		static Hotel *instanceHotel;
-		string hotelName;
-		string hotelAddress;
-	public:
-		Employee *employee[5];
-		Restaurant restuarant;
-		
-		Room room[6];
-		Customer *customer[5];
-		
-	private: 
-			
-		
-		Hotel(string hname,string add)
-		{
-			this->hotelName=hname;
-			this->hotelAddress=add;
-		}
-	public:
-		static Hotel* getHotel()
-		{
-			if(!instanceHotel)
-			instanceHotel=new Hotel("RENNAISSANCE","HUBLI");
-			return instanceHotel;
-		}
-		
-		void setHotel(Restaurant r,Room rs[6])
-		{
-			int i;
-			
-			for(i=0;i<6;i++)
-			{
-				this->room[i]=rs[i];
-			}
-			for( i=0;i<8;i++)
-			this->restuarant.dish[i]=r.dish[i];
-			
-		}
-		void generateID(Customer *c)
-		{
-			time_t t;
-			static const char m[]="abcdefghijklmnopqrstuvwxyz";
-			int i;
-			
-			for(i=0;i<6;i++)
-			{
-				c->custID=c->custID+ m[rand() % (sizeof(m)- 1)];
-			}
-			
-		}
-		
-		Room getRoom(int rno)
-		{
-			int i;
-			for(i=0;i<6;i++)
-			{
-				if(room[i].roomNo==rno)
-				return room[i];
-			}
-		}
-	 void displayAvailble(){
-	 	int i;
-	 	cout<<"\n\n----------------------------------------------Room Details----------------------------------------------\n\n";
-	 	cout<<setw(25)<<"Room Type"<<setw(25)<<"Number of Beds"<<setw(25)<<"Rent"<<setw(25)<<"Room Number\n";
-			for(i=0;i<6;i++)
-			{
-				if(room[i].status==0)
-				{
-					cout<<setw(25)<<room[i].roomType;
-					cout<<setw(25)<<room[i].noOfBeds;
-					cout<<setw(25)<<room[i].rent;
-					cout<<setw(25)<<room[i].roomNo<<"\n";
-				}
-			}
-			cout<<"\n\n";
-	 }
-	 
-	 void displayMenu()
-	 {
-	 	cout<<"\n\n-----------------------------------------------Menu-------------------------------------------------\n\n ";
-	 		int i;
-	 		const int width=8;
-	 		cout<<setw(25)<<" Dish Name"<<setw(25)<<"Price"<<setw(25)<<"Dish Type"<<endl;
-			for(i=0;i<8;i++)
-			{
-			
-			cout<<setw(25)<<restuarant.dish[i].dishName;
-			cout<<setw(25)<<restuarant.dish[i].price;
-			cout<<setw(25)<<restuarant.dish[i].dishType<<"\n";
-			}
-	 	cout<<"\n\n";
-	}
+	    double dbill;
+	    Dish d;
+	    int orderStatus;
 	
-		void bookRoom(int r)
-		{
-			int i;
-			for(i=0;i<6;i++)
-			{
-			if(room[i].roomNo==r)
-		room[i].status=1;}
-		}
-
-		
-		void askFeedback()
-		{
-			int f;
-			string cname;
-			ofstream feedback;
-  			feedback.open ("feedback.txt",ios::app);
-  			feedback <<"Customer Name\t : ";
-			cout<<"Enter your Name\n";
-			cin>>cname;
-			feedback<<cname<<"\t\t\t";
-			cout<<" Thanks for your time! \n How likely are you to recommend Hotel Rennaisance to a Friend or Colleague? \n Rate on a scale of 1-10\n";
-			cin>>f;
-			feedback<<"Feedback\t: ";
-			feedback<<f<<"\n";
-			feedback.close();
-				cout<<" Thanks for your valuable feedback!"<<endl;
-		}
-		
-		void getCustomerData(Customer *c)
-		{
-			cout<<" Name :: "<<c->custName<<endl;
-			cout<<" Address :: "<<c->custAddress<<endl;
-			cout<<" Phone :: "<<c->custPhone <<endl;
-			cout<<" Email :: "<<c->custEmail <<endl;
-			cout<<" Check-In Time:: "<<c->checkInTime <<endl;
-		}
-		
-		 void vacateRoom(int rno)
-		{
-			int i,j=0;
-			for(i=0;i<6;i++)
-			{
-				
-				if(room[i].roomNo==rno)
-			{
-				j=1;
-			room[i].status=0;
-			cout<<"Thank You! Visit Again.\n"<<endl;}
-			}
-				if(j==0)
-				throw Exception(8,"Sorry! Room Not Found, or occupied at the moment\n");
-		
-		}
-		void takeOrder(string dnm)
-		{
-			int i,j=0;;
-			for(i=0;i<8;i++)
-			{
-			if(	restuarant.dish[i].dishName== dnm)
-			{ 
-			j=1;
-			cout<<"Order Successful\n"<<endl;
-			}
-			}
-			if(j==0)
-			throw Exception(9, "Sorry! Dish Not Found, Enter a valid entry");
-		}
-			 
+	public:
+	    RestaurantCustomer() : dbill(0), orderStatus(0) {
+	        // You can initialize dbill and orderStatus if needed.
+	    }
+	
+	    void viewTotalBill() {
+	        std::cout << "Bill = " << dbill << std::endl;
+	    }
+	
+	    void allocateDish(Dish d1) {
+	        d = d1;
+	    }
+	
+	    void printCustomer() {
+	        Customer::printCustomer();
+	        if (orderStatus) {
+	            std::cout << "Dish Name :: " << d.dishName << std::endl;
+	            std::cout << "Dish Type :: " << d.dishType << std::endl;
+	        }
+	    }
+	
+	    void viewTotalBill() {
+	        dbill = d.price;
+	        std::cout << "Bill :: " << dbill << std::endl;
+   	 }
 };
-Hotel *Hotel :: instanceHotel=0;
+
+
+
+class Employee {
+public:
+    virtual void performDuty() = 0;
+    virtual ~Employee() {}
+};
+
+class RoomService : public Employee {
+public:
+    void performDuty() override {
+        std::cout << "Employee XYZ arriving at your doorstep..." << std::endl;
+    }
+    ~RoomService() override {}
+};
+
+class Waiter : public Employee {
+public:
+    void performDuty() override {
+        std::cout << "Employee ABC arriving at your table to take your order." << std::endl;
+    }
+    ~Waiter() override {}
+};
+
+class SelectEmployee {
+    Employee* e;
+
+public:
+    SelectEmployee(Employee* e1) : e(e1) {}
+
+    void performDuty() {
+        e->performDuty();
+    }
+};
+
+
+
+
+class Dish {
+public:
+    std::string dishName;
+    double price;
+    std::string dishType;
+};
+
+class Restaurant {
+private:
+    Dish dish[8];
+
+public:
+    void addDishes() {
+        std::ofstream menu("Menu.txt", std::ios::app);
+        if (!menu.is_open()) {
+            std::cerr << "Error opening Menu.txt for writing." << std::endl;
+            return;
+        }
+
+        for (int i = 0; i < 8; i++) {
+            std::cout << i + 1 << "] Enter Dish Name, Price, and Type: ";
+            std::cin >> dish[i].dishName >> dish[i].price >> dish[i].dishType;
+            menu << dish[i].dishName << "\t" << dish[i].price << "\t" << dish[i].dishType << "\n";
+        }
+
+        menu.close();
+    }
+
+    Dish getDish(const std::string& dnam) {
+        for (int i = 0; i < 8; i++) {
+            if (dish[i].dishName == dnam) {
+                return dish[i];
+            }
+        }
+        // Return a default Dish if not found
+        return Dish{};
+    }
+
+    void displayDish(const Dish& d) {
+        std::cout << "Dish Name: " << d.dishName << std::endl;
+        std::cout << "Price: " << d.price << std::endl;
+        std::cout << "Dish Type: " << d.dishType << std::endl;
+    }
+
+    void displayMenu() {
+        for (int i = 0; i < 8; i++) {
+            displayDish(dish[i]);
+        }
+    }
+};
+
+
+class Hotel {
+private:
+    static Hotel* instanceHotel;
+    std::string hotelName;
+    std::string hotelAddress;
+
+    Employee* employee[5];
+    Restaurant restaurant;
+    Room room[6];
+    Customer* customer[5];
+
+private:
+    Hotel(const std::string& hname, const std::string& add)
+        : hotelName(hname), hotelAddress(add) {}
+
+public:
+    static Hotel* getHotel() {
+        if (!instanceHotel)
+            instanceHotel = new Hotel("RENNAISSANCE", "HUBLI");
+        return instanceHotel;
+    }
+
+    void setHotel(const Restaurant& r, Room rs[6]) {
+        for (int i = 0; i < 6; i++) {
+            room[i] = rs[i];
+        }
+        for (int i = 0; i < 8; i++) {
+            restaurant.dish[i] = r.dish[i];
+        }
+    }
+
+    void generateID(Customer* c) {
+        static const char m[] = "abcdefghijklmnopqrstuvwxyz";
+        c->custID.clear();
+        for (int i = 0; i < 6; i++) {
+            c->custID += m[std::rand() % (sizeof(m) - 1)];
+        }
+    }
+
+    Room getRoom(int rno) {
+        for (int i = 0; i < 6; i++) {
+            if (room[i].roomNo == rno) {
+                return room[i];
+            }
+        }
+        // Return a default Room if not found
+        return Room();
+    }
+
+    void displayAvailableRooms() {
+        std::cout << "\n\n----------------------------------------------Room Details----------------------------------------------\n\n";
+        std::cout << std::left << std::setw(25) << "Room Type"
+                  << std::setw(25) << "Number of Beds"
+                  << std::setw(25) << "Rent"
+                  << std::setw(25) << "Room Number" << std::endl;
+        for (int i = 0; i < 6; i++) {
+            if (room[i].status == 0) {
+                std::cout << std::left << std::setw(25) << room[i].roomType
+                          << std::setw(25) << room[i].noOfBeds
+                          << std::setw(25) << room[i].rent
+                          << std::setw(25) << room[i].roomNo << std::endl;
+            }
+        }
+        std::cout << "\n\n";
+    }
+
+    void displayMenu() {
+        std::cout << "\n\n-----------------------------------------------Menu-------------------------------------------------\n\n ";
+        std::cout << std::left << std::setw(25) << "Dish Name"
+                  << std::setw(25) << "Price"
+                  << std::setw(25) << "Dish Type" << std::endl;
+        for (int i = 0; i < 8; i++) {
+            std::cout << std::left << std::setw(25) << restaurant.dish[i].dishName
+                      << std::setw(25) << restaurant.dish[i].price
+                      << std::setw(25) << restaurant.dish[i].dishType << std::endl;
+        }
+        std::cout << "\n\n";
+    }
+
+    void bookRoom(int r) {
+        for (int i = 0; i < 6; i++) {
+            if (room[i].roomNo == r) {
+                room[i].status = 1;
+            }
+        }
+    }
+
+    void askFeedback() {
+        int f;
+        std::string cname;
+        std::ofstream feedback("feedback.txt", std::ios::app);
+        if (!feedback.is_open()) {
+            std::cerr << "Error opening feedback.txt for writing." << std::endl;
+            return;
+        }
+        feedback << "Customer Name: ";
+        std::cout << "Enter your Name: ";
+        std::cin >> cname;
+        feedback << cname << "\t\t\t";
+        std::cout << "Thanks for your time!\nHow likely are you to recommend Hotel Renaissance to a Friend or Colleague?\nRate on a scale of 1-10: ";
+        std::cin >> f;
+        feedback << "Feedback: " << f << "\n";
+        feedback.close();
+        std::cout << "Thanks for your valuable feedback!" << std::endl;
+    }
+
+    void getCustomerData(Customer* c) {
+        std::cout << "Name: " << c->custName << std::endl;
+        std::cout << "Address: " << c->custAddress << std::endl;
+        std::cout << "Phone: " << c->custPhone << std::endl;
+        std::cout << "Email: " << c->custEmail << std::endl;
+        std::cout << "Check-In Time: " << c->checkInTime << std::endl;
+    }
+
+    void vacateRoom(int rno) {
+        int j = 0;
+        for (int i = 0; i < 6; i++) {
+            if (room[i].roomNo == rno) {
+                j = 1;
+                room[i].status = 0;
+                std::cout << "Thank You! Visit Again." << std::endl;
+            }
+        }
+        if (j == 0) {
+            throw Exception(8, "Sorry! Room Not Found or occupied at the moment.");
+        }
+    }
+
+    void takeOrder(const std::string& dnm) {
+        int j = 0;
+        for (int i = 0; i < 8; i++) {
+            if (restaurant.dish[i].dishName == dnm) {
+                j = 1;
+                std::cout << "Order Successful" << std::endl;
+            }
+        }
+        if (j == 0) {
+            throw Exception(9, "Sorry! Dish Not Found, Enter a valid entry.");
+        }
+    }
+};
+Hotel* Hotel::instanceHotel = nullptr;
 int main()
 {
 	
