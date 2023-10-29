@@ -385,14 +385,17 @@ public:
         }
     }
 
-    void generateID(Customer* c) {
-        static const char m[] = "abcdefghijklmnopqrstuvwxyz";
-        c->custID.clear();
-        for (int i = 0; i < 6; i++) {
-            c->custID += m[std::rand() % (sizeof(m) - 1)];
-        }
-    }
+    void generateSecureID(Customer* c) {
+    static const char m[] = "abcdefghijklmnopqrstuvwxyz";
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, sizeof(m) - 2);
 
+    c->custID.clear();
+    for (int i = 0; i < 6; i++) {
+        c->custID += m[dis(gen)];
+    }
+}
     Room getRoom(int rno) {
         for (int i = 0; i < 6; i++) {
             if (room[i].roomNo == rno) {
