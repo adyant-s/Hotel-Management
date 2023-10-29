@@ -95,7 +95,7 @@ class Dish
 	    Dish(const std::string& dishName, double price, const std::string& dishType)
 	        : dishName(dishName), price(price), dishType(dishType) {}
 	
-	    Dish() {}
+	    Dish()=default;
 	
 	    void setDish() {
 	        std::cout << "Enter Dish Name, Price, and Dish Type" << std::endl;
