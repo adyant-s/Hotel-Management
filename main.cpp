@@ -499,275 +499,224 @@ public:
     }
 };
 Hotel* Hotel::instanceHotel = nullptr;
-int main()
-{
-	
+int main() {
+    int ch, ch1, ch2, rno, o;
+    Room r2;
+    string dname;
+    Dish d2;
+    Hotel *Renaissance = Renaissance->getHotel();
 
-	
-		
-		ifstream file("Description.txt");
-		if (file.is_open()) {
-    std::string line;
-    while (std::getline(file, line)) {
-        printf("%s", line.c_str());
+    Dish d[8] = {
+        Dish("Chocolate_Fondue", 140, "Desert"),
+        Dish("Manchow_Soup", 110, "Soup"),
+        Dish("Shahi_Paneer", 220, "Main Course"),
+        Dish("Arizona_Tea", 100, "Beverage"),
+        Dish("Grilled_Romaine Salad", 180, "Salad"),
+        Dish("Mushroom_Manchurian", 170, "Starter"),
+        Dish("Pina_Colada", 210, "Cocktail"),
+        Dish("Raspberry_Ripple", 120, "Ice Cream")
+    };
+
+    Customer *c[5];
+    Restaurant res;
+    for (int i = 0; i < 8; i++) {
+        res.dish[i] = d[i];
     }
-    file.close();
+    Renaissance->restaurant = res;
+
+    Room rm[6] = {
+        Room("Deluxe", 2, 3500, 1),
+        Room("AC", 1, 5500, 2),
+        Room("Non AC", 2, 2500, 3),
+        Room("AC", 2, 3500, 4),
+        Room("Deluxe", 2, 3500, 5),
+        Room("Deluxe", 3, 4500, 6)
+    };
+    SelectEmployee *e;
+    Renaissance->setHotel(res, rm);
+
+    while (1) {
+        for (int i = 0; i < 5; i++) {
+            try {
+            level2:
+                cout << "Enter \n\t1. Accommodation\n\t2. Restaurant\n\t3. Exit\n";
+                cin >> ch;
+                if (ch == 1) {
+                    Renaissance->customer[i] = new RoomCustomer;
+                    Renaissance->generateID(Renaissance->customer[i]);
+                    cout << "Enter Your details\n";
+                    Renaissance->customer[i]->setData();
+                level1:
+                    cout << "Enter \n\t\t1. To Display Rooms \n\t\t2. To Book a Room \n\t\t3. To Vacate Room \n\t\t4. To Get Invoice  \n\t\t5. Not Satisfied? \n\t\t6. Cancel Booking \n\t\t7. Give Feedback \n\t\t8. Back\n\n";
+                    cin >> ch1;
+                    switch (ch1) {
+                        case 1:
+                            Renaissance->displayAvailable();
+                            goto level1;
+                        case 2:
+                            if (Renaissance->customer[i]->status) {
+                                cout << "\n\n-----------------------------------------------------------------------------------------\n\n";
+                                throw Exception(1, "Sorry! You Cannot Book more than one room!\n");
+                                cout << "\n\n-----------------------------------------------------------------\n\n";
+                            }
+                            else {
+                                Renaissance->customer[i]->status = 1;
+                                Renaissance->displayAvailable();
+                                cout << "Enter Room No\n";
+                                cin >> rno;
+                                Renaissance->bookRoom(rno);
+                                r2 = Renaissance->getRoom(rno);
+                                Renaissance->customer[i]->allocateRoom(r2);
+                            }
+                            goto level1;
+                        case 3:
+                            if (!Renaissance->customer[i]->status) {
+                                cout << "\n\n-----------------------------------------------------------------------------------------\n\n";
+                                throw Exception(3, "Cannot vacate a book unless booked\n");
+                                cout << "\n\n-----------------------------------------------------------------\n\n";
+                            }
+                            else {
+                                Renaissance->customer[i]->status = 0;
+                                cout << "Enter Room No\n";
+                                cin >> rno;
+                                Renaissance->vacateRoom(rno);
+                                cout << "Room vacated\n";
+                            }
+                            goto level1;
+                        case 4:
+                            if (!Renaissance->customer[i]->status) {
+                                cout << "\n\n------------------------------------------------------------------------------------------\n\n";
+                                throw Exception(2, "Cannot get Invoice Details unless you book a Room\n");
+                                cout << "\n\n-----------------------------------------------------------------\n\n";
+                            }
+                            else {
+                                cout << "\n\n-----------------------------------------------------------------\n\n";
+                                Renaissance->customer[i]->printCustomer();
+                                Renaissance->customer[i]->viewTotalBill();
+                                cout << "\n\n-----------------------------------------------------------------\n\n";
+                                goto level1;
+                            }
+                        case 5:
+                            if (!Renaissance->customer[i]->status) {
+                                cout << "\n\n-----------------------------------------------------------------------------------\n\n";
+                                throw Exception(2, "Cannot call Room Service Unless you book a Room\n");
+                                cout << "\n\n-----------------------------------------------------------------\n\n";
+                            }
+                            else {
+                                e = new SelectEmployee(new RoomService);
+                                e->performDuty();
+                            }
+                            goto level1;
+                        case 6:
+                            if (!Renaissance->customer[i]->status) {
+                                cout << "\n\n-----------------------------------------------------------------------------------\n\n";
+                                throw Exception(2, "No Room Booked\n");
+                            }
+                            else {
+                                Renaissance->customer[i]->status = 0;
+                                cout << "Enter Room No\n";
+                                cin >> rno;
+                                Renaissance->vacateRoom(rno);
+                                cout << "Cancellation Successful!\n";
+                            }
+                            goto level1;
+                        case 7:
+                            if (!Renaissance->customer[i]->status) {
+                                cout << "\n\n-----------------------------------------------------------------------------------\n\n";
+                                throw Exception(2, "Cannot give feedback unless you order a Dish\n");
+                            }
+                            else
+                                Renaissance->askFeedback();
+                            goto level1;
+                        case 8:
+                            goto level2;
+                    }
+                }
+                else if (ch == 2) {
+                    Renaissance->customer[i] = new RestaurantCustomer;
+                    Renaissance->generateID(Renaissance->customer[i]);
+                    cout << "Enter Your details\n";
+                    Renaissance->customer[i]->setData();
+                level3:
+                    cout << "Enter \n\t\t1. To display Menu \n\t\t2. To order a Dish \n\t\t3. To Get Invoice \n\t\t4. To Cancel Order\n\t\t5. Give FeedBack \n\t\t6. Go back\n\n";
+                    cin >> ch2;
+                    switch (ch2) {
+                        case 1:
+                            Renaissance->displayMenu();
+                            goto level3;
+                        case 2:
+                            if (Renaissance->customer[i]->status) {
+                                cout << "\n\n-----------------------------------------------------------------------------------\n\n";
+                                throw Exception(4, "You cannot order more than one dish\n");
+                                cout << "\n\n-----------------------------------------------------------------\n\n";
+                            }
+                            else {
+                                o = 1;
+                                Renaissance->customer[i]->status = 1;
+                                Renaissance->displayMenu();
+                                e = new SelectEmployee(new Waiter);
+                                e->performDuty();
+                                cout << "Enter Dish Name you want to Order (Make sure you enter the exact same name.)\n";
+                                cin >> dname;
+                                Renaissance->takeOrder(dname);
+                                d2 = Renaissance->restaurant.getDish(dname);
+                                Renaissance->customer[i]->addToCart(d2, o);
+                                cout << "Your Order is Confirmed\n";
+                            }
+                            goto level3;
+                        case 3:
+                            if (!Renaissance->customer[i]->status) {
+                                cout << "\n\n-----------------------------------------------------------------------------------\n\n";
+                                throw Exception(5, "Cannot Get Invoice Details unless you order a Dish\n");
+                                cout << "\n\n-----------------------------------------------------------------\n\n";
+                            }
+                            else {
+                                cout << "\n\n-----------------------------------------------------------------\n\n";
+                                Renaissance->customer[i]->printCustomer();
+                                Renaissance->customer[i]->viewTotalBill();
+                                cout << "\n\n-----------------------------------------------------------------\n\n";
+                            }
+                            goto level3;
+                        case 4:
+                            if (!Renaissance->customer[i]->status) {
+                                cout << "\n\n-----------------------------------------------------------------------------------\n\n";
+                                throw Exception(6, "Cannot Cancel Order Unless you Order a Dish\n");
+                                cout << "\n\n-----------------------------------------------------------------\n\n";
+                            }
+                            else {
+                                Renaissance->customer[i]->status = 0;
+                                cout << "Enter Dish Name you want to cancel\n";
+                                cin >> dname;
+                                d2 = Renaissance->restaurant.getDish(dname);
+                                Renaissance->customer[i]->removeFromCart(d2);
+                                cout << "Your order is Cancelled!\n";
+                            }
+                            goto level3;
+                        case 5:
+                            if (!Renaissance->customer[i]->status) {
+                                cout << "\n\n-----------------------------------------------------------------------------------\n\n";
+                                throw Exception(5, "Cannot give feedback unless you order a Dish\n");
+                                cout << "\n\n-----------------------------------------------------------------\n\n";
+                            }
+                            else {
+                                Renaissance->askFeedback();
+                            }
+                            goto level3;
+                        case 6:
+                            goto level2;
+                    }
+                }
+                else if (ch == 3) {
+                    delete Renaissance->customer[i];
+                    return 0;
+                }
+            }
+            catch (Exception e) {
+                e.show();
+            }
+        }
+    }
+    return 0;
 }
-
-cout<<"\n";
-	int ch,i,o,ch1,ch2,r,rno,rcount=0,dcount=0;
-	Room r2;
-	string dname;
-	Dish d2;
-	Hotel *Rennaisance=Rennaisance->getHotel();
 	
-	Dish d[8]={
-		Dish("Chocolate_Fondue",140,"Desert"),
-		Dish("Manchow_Soup",110,"Soup"),
-		Dish("Shahi_Paneer",220,"Main Course"),
-		Dish("Arizona_Tea",100,"Beverage"),
-		Dish("Grilled_Romaine Salad",180,"Salad"),
-		Dish("Mushroom_Manchurian",170,"Starter"),
-		Dish("Pina_Colada",210,"Cocktail"),
-		Dish("Raspberry_Ripple",120,"Ice Cream")
-			};
-			
-	Customer *c[5];
-	Restaurant res;
-	for(i=0;i<8;i++)
-	{
-		res.dish[i]=d[i];
-	}
-	Rennaisance->restuarant=res;
-	
-	 Room rm[6] = {
-		Room("Deluxe",2,3500,1),
- 		Room("AC",1,5500,2),
- 		Room("Non AC",2,2500,3),
-		Room("AC",2,3500,4),
-		Room("Deluxe",2,3500,5),
-	 	Room("Deluxe",3,4500,6)
-		 };
-		 SelectEmployee *e;
-	Rennaisance->setHotel(res,rm);
-	while(1)
-	{
-		for(i=0;i<5;i++)
-		{
-			try{
-			
-	level2:	cout<<"Enter \n\t1. Accomadation\n\t2. Restaurant\n\t3. Exit\n";
-		cin>>ch;
-		if(ch==1)
-		{
-		 Rennaisance->customer[i]=new RoomCustomer;
-		 Rennaisance->generateID(Rennaisance->customer[i]);
-		 cout<<"Enter Your details\n";
-		 Rennaisance->customer[i]->setData();
-		level1:	cout<<"Enter \n\t\t1. To Display Rooms \n\t\t2. To Book a Room \n\t\t3. To Vacate Room \n\t\t4. To Get Invoice  \n\t\t5. Not Satisfied? \n\t\t6. Cancel Booking \n\t\t7. Give Feedback \n\t\t8. Back\n\n";
-			cin>>ch1;
-			switch(ch1)
-			{
-				case 1: Rennaisance->displayAvailble();
-				goto level1;
-				case 2: 
-				if(Rennaisance->customer[i]->status)
-				{
-				cout<<"\n\n-----------------------------------------------------------------------------------------\n\n";
-				throw Exception(1,"Sorry! You Cannot Book more than one room!\n");
-				cout<<"\n\n-----------------------------------------------------------------\n\n";}
-				else
-				{
-				Rennaisance->customer[i]->status=1;
-				Rennaisance->displayAvailble();
-				cout<<"Enter Room No\n";
-				cin>>rno;
-				Rennaisance->bookRoom(rno);
-				r2=Rennaisance->getRoom(rno);
-				Rennaisance->customer[i]->allocateRoom(r2);
-				}
-				
-				goto level1;
-				case 3: 
-				if(!Rennaisance->customer[i]->status)
-				{
-				cout<<"\n\n-----------------------------------------------------------------------------------------\n\n";
-				throw Exception(3,"Cannot vacate a book unless booked\n");
-				cout<<"\n\n-----------------------------------------------------------------\n\n";}
-				
-				else
-				{
-				Rennaisance->customer[i]->status=0;
-				cout<<"Enter Room No\n";
-				cin>>rno;
-				Rennaisance->vacateRoom(rno);
-				cout<<"Room vacated\n";
-			
-				}
-				goto level1;
-				case 4: if(!Rennaisance->customer[i]->status)
-			{
-				cout<<"\n\n------------------------------------------------------------------------------------------\n\n";
-				throw Exception(2,"Cannot get Invoice Details unless you book a Room\n");
-				cout<<"\n\n-----------------------------------------------------------------\n\n";}
-				
-				else 
-				{
-				cout<<"\n\n-----------------------------------------------------------------\n\n";
-				Rennaisance->customer[i]->printCustomer();
-				Rennaisance->customer[i]->viewTotalBill();
-					cout<<"\n\n-----------------------------------------------------------------\n\n";
-				goto level1;}
-				case 5: 
-				if(!Rennaisance->customer[i]->status)
-				
-			{
-			cout<<"\n\n--------------------------------------------------------------------------------------------\n\n";
-				throw Exception(2,"Cannot call Room Service Unless you book a Room\n");
-				cout<<"\n\n-----------------------------------------------------------------\n\n";}
-				
-				else
-				{
-					e=new SelectEmployee(new RoomService);
-					e->performDuty();
-				//Rennaisance->employee->performDuty()
-			}
-					goto level1;
-				case 6: 	if(!Rennaisance->customer[i]->status)
-			 {
-				 	cout<<"\n\n-----------------------------------------------------------------------------------\n\n";
-				throw Exception(2,"No Room Booked\n");
-				}
-				
-				else
-				{
-					
-					Rennaisance->customer[i]->status=0;
-					cout<<"Enter Room No\n";
-				cin>>rno;
-				Rennaisance->vacateRoom(rno);
-					cout<<"Cancellation Successful!\n";
-					
-				}
-				goto level1;
-				case 7: if(!Rennaisance->customer[i]->status)
-			 {
-				 	cout<<"\n\n-----------------------------------------------------------------------------------\n\n";
-				throw Exception(2,"Cannot give feedback unless you order a Dish\n");
-				}
-				else
-
-				Rennaisance->askFeedback();
-				goto level1;
-				case 8: goto level2;
-			}
-			
-		}
-		
-		
-		else if(ch==2)
-		{
-	 	Rennaisance->customer[i]=new RestaurantCustomer;
-		 Rennaisance->generateID(Rennaisance->customer[i]);
-		 cout<<"Enter Your details\n";
-		 Rennaisance->customer[i]->setData();
-	level3:	cout<<"Enter \n\t\t1. To display Menu \n\t\t2. To order a Dish \n\t\t3. To Get Invoice \n\t\t4. To Cancel Order\n\t\t5. Give FeedBack \n\t\t6. Go back\n\n";
-		cin>>ch2;
-		switch(ch2)
-		{
-			case 1:
-				Rennaisance->displayMenu();
-				goto level3;
-			case 2:
-				if(Rennaisance->customer[i]->status)
-			{
-				cout<<"\n\n-----------------------------------------------------------------------------------\n\n";
-				throw Exception(4,"You cannot order more than one dish\n");
-				cout<<"\n\n-----------------------------------------------------------------\n\n";}
-				else
-				{
-					o=1;
-					Rennaisance->customer[i]->status=1;
-			 Rennaisance->displayMenu();
-			 e=new SelectEmployee(new Waiter);
-			 e->performDuty();
-			 cout<<"Enter Dish Name you want to Order(Make sure you enter the exact same name.)\n";
-	
-		cin>>dname;
-			 Rennaisance->takeOrder(dname);
-			 
-			 d2=Rennaisance->restuarant.getDish(dname);
-			
-			Rennaisance->customer[i]->allocateDish(d2);
-		
-			 if(o==0)
-			 {
-			 cout<<"\n\n-----------------------------------------------------------------------------------------\n\n";
-			 throw Exception(6,"No such Dish Found");
-		}
-		
-			 }
-			 	 goto level3;
-			 case 3:
-			 	if(!Rennaisance->customer[i]->status)
-			 {
-				 	cout<<"\n\n-----------------------------------------------------------------------------------\n\n";
-				throw Exception(2,"Cannot get Invoice Details unless you order a Dish\n");
-				}
-				
-				else 
-				{
-				cout<<"\n\n-----------------------------------------------------------------\n\n";
-				Rennaisance->customer[i]->printCustomer();
-				Rennaisance->customer[i]->viewTotalBill();
-					cout<<"\n\n-----------------------------------------------------------------\n\n";
-			}
-				goto level3;
-				case 4: 	if(!Rennaisance->customer[i]->status)
-			 {
-				 	cout<<"\n\n-----------------------------------------------------------------------------------\n\n";
-				throw Exception(2,"No Dish Ordered\n");
-				}
-				else
-				{
-					Rennaisance->customer[i]->status=0;
-					cout<<"Cancelation Successful!\n";
-					
-				}
-				
-			case 5:	if(!Rennaisance->customer[i]->status)
-			 {
-				 	cout<<"\n\n-----------------------------------------------------------------------------------\n\n";
-				throw Exception(2,"Cannot give feedback unless you order a Dish\n");
-				}
-				else
-
-				Rennaisance->askFeedback();
-				goto level1;
-				case 6:
-				goto level2;
-				
-				
-			 
-		}
-		}
-		else if(ch==3)
-		exit(0);
-		else
-		{
-			cout<<"-----------------------------------------------------------------------------------\n\n";
-			throw Exception(5,"INVALID INPUT\n");
-			
-		}
-		goto level2;
-		}
-	
-	catch(Exception eh)
-	{
-		eh.what();
-		cout<<"-----------------------------------------------------------------------------------\n\n";
-	}
-	}	}
-return 0;
-}	
 
